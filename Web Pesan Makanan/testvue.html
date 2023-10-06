@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pos Vue</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+</head>
+
+<body >
+  <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8" id="app">
+    <div class="flex flex-wrap my-5 mx-2">
+      <div class="w-full lg:w-3/5 min-h-screen">
+        <!-- Product -->
+        <div class="mt-14 px-8 grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-1  md:gap-x-4 xl:gap-x-4">
+          <div v-for="(product, index) in products" class="flex max-w-md   rounded-lg border hover:shadow-lg">
+            <div class="w-1/3 " :style="`background-image: url(${product.image});`"></div>
+
+            <div class="w-2/3 p-4 md:p-4">
+              <h1 class="text-xl font-bold">{{product.name}}</h1>
+              <div class="flex justify-between mt-3 items-center">
+                <h1 class="text-lg  md:text-xl">{{product.price}}</h1>
+                <button @click="addCart(product)" class="py-1 text-xs p-2 font-bold text-white transition-colors duration-300 transform bg-slate-950 rounded">Tambah</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="w-full lg:w-2/5 shadow-lg lg:p-10 ">
+        <div class="flex flex-row ">
+          <div class="basis-1/2 text-center items-start">
+            <span class="font-bold text-xl">Current Order</span>
+            <button class="py-3 px-6 text-white rounded-lg bg-red-500 shadow-lg block md:inline-block">Save
+              <button v-on:click="product.splice(index, 1)">Remove</button>
+              <button v-on:click="editProduct(index, item)">Edit</button>
+            </button>
+          </div>
+          
+          <div class="px-3 py-4">
+            <div v-for="(item, index) in carts" class="flex flex-row  -b-2 p-2">
+              <div class="flex flex-row items-center w-3/5">
+                <img src="item.image" class="w-full object-cover " alt="">
+                <div class="grid grid-cols-1 xs:grid-cols-1 lg:grid-cols-4 w-full">
+                  <div class="col-span-3">
+                    <span class="ml-4">{{item.name}}</span><br>
+                    <span class="text-xs ml-4">{{item.price}}</span>
+                  </div>
+                  <div class="ml-4 flex justify-between">
+                    <span class="font-semibold ml-4">{{item.qty}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</body>
+<script>
+  const {
+    createApp,
+    ref
+  } = Vue
+  createApp({
+    data() {
+      return {
+        products: [{
+          'code': 'P001',
+          'name': 'Ayam Pedas',
+          'image': 'C:\Users\acer\Desktop\web_vue.js-main\src\Foto makanan\ayam pedas.jpg',
+          'price': 10000
+        }, {
+          'code': 'P002',
+          'name': 'Nasi Goreng',
+          'image': 'C:\Users\acer\Desktop\web_vue.js-main\src\Foto makanan\nasi goreng.jpg',
+          'price': 10000
+        }, {
+          'code': 'P003',
+          'name': 'Capcay',
+          'image': 'C:\Users\acer\Desktop\web_vue.js-main\src\Foto makanan\capcay.jpeg',
+          'price': 12000
+        }, {
+          'code': 'P004',
+          'name': 'Sop buntut',
+          'image': 'C:\Users\acer\Desktop\web_vue.js-main\src\Foto makanan\sop buntut.jpg',
+          'price': 16000
+        }, {
+          'code': 'P005',
+          'name': 'Tahu Kecap',
+          'image': 'C:\Users\acer\Desktop\web_vue.js-main\src\Foto makanan\tahu kecap.jpg',
+          'price': 10000
+        }],
+        carts: [],
+        total: 0,
+        subtotal: 0,
+        disc: 0,
+        payNom: 0,
+        change: 0,
+        msg: '',
+        promoCode: '',
+    }
+  },
+      methods: {
+        addCart: function(product) {
+          this.subtotal = this.subtotal + product.price
+          this.total = this.subtotal - this.disc
+          product.qty = 1
+          this.carts.push(product)
+        },
+        qtyCart: function(item, qty, index) {
+          item.qty = item.qty + qty
+          if (qty < 0) {
+            this.subtotal = this.subtotal - item.price
+          } else {
+            this.subtotal = this.subtotal + item.price
+          }
+          if (item.qty == 0) {
+            this.carts.splice(index, 1)
+          }
+          this.total = this.subtotal -this.disc
+        },
+        
+        getPromo: function() {
+          switch (this.promoCode) {
+            case "neuroses":
+              this.disc = (this.total * 25) / 100
+              break;
+            
+            default:
+              this.msg = 'Kode diskon tidak ditemukan'
+              break;
+          }
+          this.total = this.subtotal - this.disc
+        },
+
+      },
+  }).mount('#app')
+</script>
+</html>
